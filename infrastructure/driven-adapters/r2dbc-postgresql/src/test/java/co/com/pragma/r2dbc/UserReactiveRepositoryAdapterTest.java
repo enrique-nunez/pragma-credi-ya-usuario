@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.data.domain.Example;
 import reactor.core.publisher.Flux;
@@ -20,9 +22,11 @@ import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class UserReactiveRepositoryAdapterTest {
 
     @InjectMocks
@@ -36,12 +40,12 @@ class UserReactiveRepositoryAdapterTest {
 
     @BeforeEach
     void setUp() {
-        // Configurar el mapper para todos los tests
         UserEntity userEntity = createUserEntity();
         User user = createUser();
 
-        when(mapper.map(any(UserEntity.class), eq(User.class))).thenReturn(user);
-        when(mapper.map(any(User.class), eq(UserEntity.class))).thenReturn(userEntity);
+        // Usar lenient() para evitar UnnecessaryStubbingException
+        lenient().when(mapper.map(any(UserEntity.class), eq(User.class))).thenReturn(user);
+        lenient().when(mapper.map(any(User.class), eq(UserEntity.class))).thenReturn(userEntity);
     }
 
     @Test
