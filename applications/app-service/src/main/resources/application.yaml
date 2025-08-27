@@ -9,6 +9,8 @@ spring:
     init:
       mode: "always"
       schema-locations: "classpath:schema.sql"
+  jackson:
+    default-property-inclusion: "non_null"
 adapters:
   r2dbc:
     host: "localhost"
