@@ -14,16 +14,16 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 public class User {
     private Long id;
-    private String nombres;
-    private String apellidos;
-    private LocalDate fechaNacimiento;
-    private String direccion;
-    private String telefono;
-    private String correoElectronico;
-    private BigDecimal salarioBase;
-    private LocalDateTime fechaCreacion;
+    private String firstName;
+    private String lastName;
+    private LocalDate birthDate;
+    private String address;
+    private String phone;
+    private String email;
+    private BigDecimal baseSalary;
+    private LocalDateTime creationDate;
 
     public User() {
-        this.fechaCreacion = LocalDateTime.now();
+        this.creationDate = LocalDateTime.now();
     }
 }

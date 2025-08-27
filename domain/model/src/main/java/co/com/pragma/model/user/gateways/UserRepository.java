@@ -8,5 +8,5 @@ public interface UserRepository {
     Mono<User> save(User user);
     Mono<User> findById(Long id);
     Flux<User> findAll();
-    Mono<User> findByCorreoElectronico(String correoElectronico);
+    Mono<User> findByEmail(String email);
 }

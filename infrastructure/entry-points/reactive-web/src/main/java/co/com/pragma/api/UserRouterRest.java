@@ -1,4 +1,4 @@
-package co.com.pragma.api.user;
+package co.com.pragma.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,12 +18,12 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
-@Tag(name = "UserHandler", description = "Operaciones para administración de usuarios")
+@Tag(name = "UserHandler", description = "Operaciones para la administración de usuarios")
 public class UserRouterRest {
 
     @Bean
     @RouterOperations({
-            @RouterOperation(path = "/api/users", method = RequestMethod.POST,
+            @RouterOperation(path = "/api/v1/usuarios", method = RequestMethod.POST,
                     operation = @Operation(operationId = "createUser", summary = "Crear usuario",
                             description = "Crea un nuevo usuario en el sistema",
                             tags = {"UserHandler"},
@@ -31,7 +31,7 @@ public class UserRouterRest {
                                     @ApiResponse(responseCode = "201", description = "Usuario creado exitosamente"),
                                     @ApiResponse(responseCode = "400", description = "Datos inválidos")
                             })),
-            @RouterOperation(path = "/api/users/{id}", method = RequestMethod.GET,
+            @RouterOperation(path = "/api/v1/usuarios/{id}", method = RequestMethod.GET,
                     operation = @Operation(operationId = "getUserById", summary = "Obtener usuario por ID",
                             tags = {"UserHandler"},
                             parameters = @Parameter(name = "id", in = ParameterIn.PATH, description = "ID del usuario"),
@@ -39,18 +39,18 @@ public class UserRouterRest {
                                     @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
                                     @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
                             })),
-            @RouterOperation(path = "/api/users/email/{email}", method = RequestMethod.GET,
+            @RouterOperation(path = "/api/v1/usuarios/email/{email}", method = RequestMethod.GET,
                     operation = @Operation(operationId = "getUserByEmail", summary = "Obtener usuario por email",
                             tags = {"UserHandler"},
                             parameters = @Parameter(name = "email", in = ParameterIn.PATH, description = "Email del usuario"))),
-            @RouterOperation(path = "/api/users", method = RequestMethod.GET,
+            @RouterOperation(path = "/api/v1/usuarios", method = RequestMethod.GET,
                     operation = @Operation(operationId = "getAllUsers", summary = "Listar todos los usuarios",
                             tags = {"UserHandler"}))
     })
     public RouterFunction<ServerResponse> userRouterFunction(UserHandler userHandler) {
-        return route(POST("/api/users"), userHandler::createUser)
-                .andRoute(GET("/api/users/{id}"), userHandler::getUserById)
-                .andRoute(GET("/api/users/email/{email}"), userHandler::getUserByEmail)
-                .andRoute(GET("/api/users"), userHandler::getAllUsers);
+        return route(POST("/api/v1/usuarios"), userHandler::createUser)
+                .andRoute(GET("/api/v1/usuarios/{id}"), userHandler::getUserById)
+                .andRoute(GET("/api/v1/usuarios/email/{email}"), userHandler::getUserByEmail)
+                .andRoute(GET("/api/v1/usuarios"), userHandler::getAllUsers);
     }
 }

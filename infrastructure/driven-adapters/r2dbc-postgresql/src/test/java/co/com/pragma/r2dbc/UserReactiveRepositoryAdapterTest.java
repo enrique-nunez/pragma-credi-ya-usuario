@@ -2,6 +2,7 @@ package co.com.pragma.r2dbc;
 
 import co.com.pragma.model.user.User;
 import co.com.pragma.r2dbc.entity.UserEntity;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,28 +19,36 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class MyReactiveRepositoryAdapterTest {
-    // TODO: change four you own tests
+class UserReactiveRepositoryAdapterTest {
 
     @InjectMocks
-    MyReactiveRepositoryAdapter repositoryAdapter;
+    UserReactiveRepositoryAdapter repositoryAdapter;
 
     @Mock
-    MyReactiveRepository repository;
+    UserReactiveRepository repository;
 
     @Mock
     ObjectMapper mapper;
 
-    @Test
-    void mustFindValueById() {
+    @BeforeEach
+    void setUp() {
+        // Configurar el mapper para todos los tests
         UserEntity userEntity = createUserEntity();
         User user = createUser();
 
+        when(mapper.map(any(UserEntity.class), eq(User.class))).thenReturn(user);
+        when(mapper.map(any(User.class), eq(UserEntity.class))).thenReturn(userEntity);
+    }
+
+    @Test
+    void mustFindValueById() {
+        UserEntity userEntity = createUserEntity();
+
         when(repository.findById(1L)).thenReturn(Mono.just(userEntity));
-        when(mapper.map(userEntity, User.class)).thenReturn(user);
 
         Mono<User> result = repositoryAdapter.findById(1L);
 
@@ -51,10 +60,8 @@ class MyReactiveRepositoryAdapterTest {
     @Test
     void mustFindAllValues() {
         UserEntity userEntity = createUserEntity();
-        User user = createUser();
 
         when(repository.findAll()).thenReturn(Flux.just(userEntity));
-        when(mapper.map(userEntity, User.class)).thenReturn(user);
 
         Flux<User> result = repositoryAdapter.findAll();
 
@@ -69,7 +76,6 @@ class MyReactiveRepositoryAdapterTest {
         User user = createUser();
 
         when(repository.findAll(any(Example.class))).thenReturn(Flux.just(userEntity));
-        when(mapper.map(userEntity, User.class)).thenReturn(user);
 
         Flux<User> result = repositoryAdapter.findByExample(user);
 
@@ -83,9 +89,7 @@ class MyReactiveRepositoryAdapterTest {
         UserEntity userEntity = createUserEntity();
         User user = createUser();
 
-        when(mapper.map(user, UserEntity.class)).thenReturn(userEntity);
-        when(repository.save(userEntity)).thenReturn(Mono.just(userEntity));
-        when(mapper.map(userEntity, User.class)).thenReturn(user);
+        when(repository.save(any(UserEntity.class))).thenReturn(Mono.just(userEntity));
 
         Mono<User> result = repositoryAdapter.save(user);
 
@@ -97,43 +101,41 @@ class MyReactiveRepositoryAdapterTest {
     @Test
     void mustFindByCorreoElectronico() {
         UserEntity userEntity = createUserEntity();
-        User user = createUser();
 
-        when(repository.findByCorreoElectronico("test@example.com")).thenReturn(Mono.just(userEntity));
-        when(mapper.map(userEntity, User.class)).thenReturn(user);
+        when(repository.findByEmail("test@example.com")).thenReturn(Mono.just(userEntity));
 
-        Mono<User> result = repositoryAdapter.findByCorreoElectronico("test@example.com");
+        Mono<User> result = repositoryAdapter.findByEmail("test@example.com");
 
         StepVerifier.create(result)
-                .expectNextMatches(value -> value.getCorreoElectronico().equals("test@example.com"))
+                .expectNextMatches(value -> value.getEmail().equals("test@example.com"))
                 .verifyComplete();
     }
 
     private UserEntity createUserEntity() {
         UserEntity entity = new UserEntity();
         entity.setId(1L);
-        entity.setNombres("Test");
-        entity.setApellidos("User");
-        entity.setCorreoElectronico("test@example.com");
-        entity.setTelefono("123456789");
-        entity.setDireccion("Test Address");
-        entity.setFechaNacimiento(LocalDate.of(1990, 1, 1));
-        entity.setSalarioBase(BigDecimal.valueOf(50000));
-        entity.setFechaCreacion(LocalDateTime.now());
+        entity.setFirstName("Test");
+        entity.setLastName("User");
+        entity.setEmail("test@example.com");
+        entity.setPhoneNumber("123456789");
+        entity.setAddress("Test Address");
+        entity.setBirthDate(LocalDate.of(1990, 1, 1));
+        entity.setBaseSalary(BigDecimal.valueOf(50000));
+        entity.setCreatedAt(LocalDateTime.now());
         return entity;
     }
 
     private User createUser() {
         return User.builder()
                 .id(1L)
-                .nombres("Test")
-                .apellidos("User")
-                .correoElectronico("test@example.com")
-                .telefono("123456789")
-                .direccion("Test Address")
-                .fechaNacimiento(LocalDate.of(1990, 1, 1))
-                .salarioBase(BigDecimal.valueOf(50000))
-                .fechaCreacion(LocalDateTime.now())
+                .firstName("Test")
+                .lastName("User")
+                .email("test@example.com")
+                .phone("123456789")
+                .address("Test Address")
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .baseSalary(BigDecimal.valueOf(50000))
+                .creationDate(LocalDateTime.now())
                 .build();
     }
 }

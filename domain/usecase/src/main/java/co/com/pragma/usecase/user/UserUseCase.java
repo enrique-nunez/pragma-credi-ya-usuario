@@ -1,84 +1,78 @@
 package co.com.pragma.usecase.user;
 
 import co.com.pragma.model.user.User;
+import co.com.pragma.model.user.exceptions.InvalidInputException;
+import co.com.pragma.model.common.ErrorCode;
+import co.com.pragma.model.user.exceptions.UserNotFoundException;
 import co.com.pragma.model.user.gateways.UserRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.regex.Pattern;
+
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class UserUseCase {
-    private final UserRepository userRepository;
 
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-    private static final BigDecimal SALARIO_MAXIMO = new BigDecimal("15000000");
+    private static final Logger logger = Logger.getLogger(UserUseCase.class.getName());
+
+    private final UserRepository userRepository;
 
     public UserUseCase(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public Mono<User> registrarUsuario(User user) {
-        user.setFechaCreacion(LocalDateTime.now());
+    public Mono<User> registerUser(User user) {
+        logger.info("Iniciando registro de usuario con email: {}" + user.getEmail());
+        user.setCreationDate(LocalDateTime.now());
 
-        return validarDatos(user)
-                .then(validarEmailUnico(user.getCorreoElectronico()))
-                .then(userRepository.save(user));
+        return validateUniqueEmail(user.getEmail())
+                .then(userRepository.save(user))
+                .doOnSuccess(savedUser ->
+                        logger.info("Usuario registrado exitosamente con ID: {}" + savedUser.getId()))
+                .doOnError(error ->
+                        logger.log(Level.SEVERE, "Error al registrar usuario con email " + user.getEmail() + ": " + error.getMessage()));
     }
 
-    public Mono<User> obtenerUsuarioPorId(Long id) {
+    public Mono<User> findUserById(Long id) {
+        logger.info("Buscando usuario por ID: " + id);
         return userRepository.findById(id)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado")));
+                .switchIfEmpty(Mono.error(new UserNotFoundException(ErrorCode.USER_NOT_FOUND)));
     }
 
-    public Mono<User> obtenerUsuarioPorEmail(String correoElectronico) {
-        return userRepository.findByCorreoElectronico(correoElectronico)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Usuario no encontrado")));
+    public Mono<User> findUserByEmail(String email) {
+        logger.info("Buscando usuario por email: " + email);
+        return userRepository.findByEmail(email)
+                .doOnSuccess(user -> {
+                    if (user != null) {
+                        logger.info("Usuario encontrado:: {}" + user.getFirstName());
+                    }
+                })
+                .doOnError(error -> logger.log(Level.SEVERE, "Error al buscar usuario con email " + email + ": " + error.getMessage()))
+                .switchIfEmpty(Mono.defer(() -> {
+                    logger.warning("Usuario no encontrado con email: {}" + email);
+                    return Mono.error(new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+                }));
     }
 
-    public Flux<User> obtenerTodosLosUsuarios() {
-        return userRepository.findAll();
+    public Flux<User> findAllUsers() {
+        logger.info("Obteniendo todos los usuarios");
+        return userRepository.findAll()
+                .doOnComplete(() -> logger.info("Todos los usuarios obtenidos exitosamente"))
+                .doOnError(error -> logger.log(Level.SEVERE, "Error al obtener usuarios: " + error.getMessage()));
     }
 
-    private Mono<Void> validarDatos(User user) {
-        return Mono.fromRunnable(() -> {
-            if (esNuloOVacio(user.getNombres())) {
-                throw new IllegalArgumentException("Los nombres son obligatorios");
-            }
-            if (esNuloOVacio(user.getApellidos())) {
-                throw new IllegalArgumentException("Los apellidos son obligatorios");
-            }
-            if (esNuloOVacio(user.getCorreoElectronico())) {
-                throw new IllegalArgumentException("El correo electrónico es obligatorio");
-            }
-            if (user.getSalarioBase() == null) {
-                throw new IllegalArgumentException("El salario base es obligatorio");
-            }
-            if (!EMAIL_PATTERN.matcher(user.getCorreoElectronico()).matches()) {
-                throw new IllegalArgumentException("El formato del correo electrónico es inválido");
-            }
-            if (user.getSalarioBase().compareTo(BigDecimal.ZERO) < 0 ||
-                    user.getSalarioBase().compareTo(SALARIO_MAXIMO) > 0) {
-                throw new IllegalArgumentException("El salario base debe estar entre 0 y 15,000,000");
-            }
-        });
-    }
-
-    private Mono<Void> validarEmailUnico(String email) {
-        return userRepository.findByCorreoElectronico(email)
+    private Mono<Void> validateUniqueEmail(String email) {
+        logger.info("Validando unicidad del email: {}" + email);
+        return userRepository.findByEmail(email)
                 .hasElement()
+                .doOnNext(exists -> logger.info("Resultado validación email único " + email + ": " + !exists))
                 .flatMap(existe -> {
                     if (Boolean.TRUE.equals(existe)) {
-                        return Mono.error(new IllegalArgumentException(
-                                "El correo electrónico ya está registrado"));
+                        return Mono.error(new InvalidInputException(ErrorCode.EMAIL_ALREADY_EXISTS));
                     }
                     return Mono.empty();
                 });
-    }
-
-    private boolean esNuloOVacio(String valor) {
-        return valor == null || valor.trim().isEmpty();
     }
 }
