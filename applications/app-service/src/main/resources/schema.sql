@@ -1,4 +1,19 @@
-CREATE TABLE IF NOT EXISTS users (
+-- Crear tabla roles
+CREATE TABLE IF NOT EXISTS rol (
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion VARCHAR(255)
+);
+
+-- Insertar roles por defecto
+INSERT INTO rol (nombre, descripcion) VALUES
+('ADMIN', 'Administrador del sistema'),
+('USER', 'Usuario estándar'),
+('MANAGER', 'Gerente')
+ON CONFLICT (nombre) DO NOTHING;
+
+-- Crear tabla usuario
+CREATE TABLE IF NOT EXISTS usuario (
     id BIGSERIAL PRIMARY KEY,
     nombres VARCHAR(100) NOT NULL,
     apellidos VARCHAR(100) NOT NULL,
@@ -7,5 +22,6 @@ CREATE TABLE IF NOT EXISTS users (
     telefono VARCHAR(20),
     correo_electronico VARCHAR(150) UNIQUE NOT NULL,
     salario_base DECIMAL(15,2),
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    role_id BIGINT REFERENCES rol(id) DEFAULT 2
 );

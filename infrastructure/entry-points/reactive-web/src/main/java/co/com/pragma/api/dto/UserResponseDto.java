@@ -13,5 +13,6 @@ public record UserResponseDto(
         String phone,
         String email,
         BigDecimal baseSalary,
-        LocalDateTime creationDate
+        LocalDateTime creationDate,
+        RoleDto role
 ) {}

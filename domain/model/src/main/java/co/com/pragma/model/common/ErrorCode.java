@@ -10,6 +10,9 @@ public enum ErrorCode {
     INVALID_SALARY_RANGE("APP_006", "Base salary must be between 0 and 15,000,000"),
     VALIDATION_ERROR("APP_007", "Validation error"),
 
+    // Role errors (404)
+    ROLE_NOT_FOUND("ROL_NO_ENCONTRADO", "El rol especificado no existe"),
+
     // Conflict errors (409)
     EMAIL_ALREADY_EXISTS("APP_409", "Email is already registered"),
 

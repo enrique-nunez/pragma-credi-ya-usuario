@@ -1,5 +1,6 @@
 package co.com.pragma.usecase.user;
 
+import co.com.pragma.model.role.gateways.RoleRepository;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.exceptions.InvalidInputException;
 import co.com.pragma.model.common.ErrorCode;
@@ -18,9 +19,11 @@ public class UserUseCase {
     private static final Logger logger = Logger.getLogger(UserUseCase.class.getName());
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
-    public UserUseCase(UserRepository userRepository) {
+    public UserUseCase(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     public Mono<User> registerUser(User user) {
@@ -38,7 +41,14 @@ public class UserUseCase {
     public Mono<User> findUserById(Long id) {
         logger.info("Buscando usuario por ID: " + id);
         return userRepository.findById(id)
-                .switchIfEmpty(Mono.error(new UserNotFoundException(ErrorCode.USER_NOT_FOUND)));
+                .switchIfEmpty(Mono.error(new UserNotFoundException(ErrorCode.USER_NOT_FOUND)))
+                .flatMap(user ->
+                        roleRepository.findById(user.getRoleId())
+                                .map(role -> {
+                                    user.setRole(role);
+                                    return user;
+                                })
+                );
     }
 
     public Mono<User> findUserByEmail(String email) {
@@ -59,8 +69,16 @@ public class UserUseCase {
     public Flux<User> findAllUsers() {
         logger.info("Obteniendo todos los usuarios");
         return userRepository.findAll()
-                .doOnComplete(() -> logger.info("Todos los usuarios obtenidos exitosamente"))
-                .doOnError(error -> logger.log(Level.SEVERE, "Error al obtener usuarios: " + error.getMessage()));
+                .flatMap(user ->
+                        roleRepository.findById(user.getRoleId())
+                                .map(role -> {
+                                    user.setRole(role);
+                                    return user;
+                                })
+                                .defaultIfEmpty(user)
+                )
+                .doOnComplete(() -> logger.info("Todos los usuarios con roles obtenidos exitosamente"))
+                .doOnError(error -> logger.log(Level.SEVERE, "Error al obtener usuarios con roles: " + error.getMessage()));
     }
 
     private Mono<Void> validateUniqueEmail(String email) {

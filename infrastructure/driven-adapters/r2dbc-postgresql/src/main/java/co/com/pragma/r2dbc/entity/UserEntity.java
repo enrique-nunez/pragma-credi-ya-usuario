@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Table("users")
+@Table("usuario")
 public class UserEntity {
     @Id
     private Long id;
@@ -36,6 +36,9 @@ public class UserEntity {
 
     @Column("fecha_creacion")
     private LocalDateTime createdAt;
+
+    @Column("role_id")
+    private Long roleId;
 
     public UserEntity() {}
 
@@ -66,4 +69,7 @@ public class UserEntity {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public Long getRoleId() { return roleId; }
+    public void setRoleId(Long roleId) { this.roleId = roleId; }
 }
