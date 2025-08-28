@@ -35,21 +35,6 @@ public class RoleUseCase {
                 }));
     }
 
-    public Mono<Role> findRoleByName(String name) {
-        logger.info("Buscando rol por nombre: " + name);
-        return roleRepository.findByName(name)
-                .doOnSuccess(role -> {
-                    if (role != null) {
-                        logger.info("Rol encontrado: " + role.getName());
-                    }
-                })
-                .doOnError(error -> logger.log(Level.SEVERE, "Error al buscar rol con nombre " + name + ": " + error.getMessage()))
-                .switchIfEmpty(Mono.defer(() -> {
-                    logger.warning("Rol no encontrado con nombre: " + name);
-                    return Mono.error(new RoleNotFoundException(ErrorCode.ROLE_NOT_FOUND));
-                }));
-    }
-
     public Flux<Role> findAllRoles() {
         logger.info("Obteniendo todos los roles");
         return roleRepository.findAll()

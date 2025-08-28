@@ -9,10 +9,12 @@ import co.com.pragma.model.user.gateways.UserRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 public class UserUseCase {
 
@@ -20,6 +22,9 @@ public class UserUseCase {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+    private static final BigDecimal MAX_SALARY = new BigDecimal("15000000");
 
     public UserUseCase(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
@@ -30,7 +35,8 @@ public class UserUseCase {
         logger.info("Iniciando registro de usuario con email: {}" + user.getEmail());
         user.setCreationDate(LocalDateTime.now());
 
-        return validateUniqueEmail(user.getEmail())
+        return validateUserData(user)
+                .then(validateUniqueEmail(user.getEmail()))
                 .then(userRepository.save(user))
                 .doOnSuccess(savedUser ->
                         logger.info("Usuario registrado exitosamente con ID: {}" + savedUser.getId()))
@@ -92,5 +98,32 @@ public class UserUseCase {
                     }
                     return Mono.empty();
                 });
+    }
+
+    private Mono<Void> validateUserData(User user) {
+        if (isNullOrEmpty(user.getFirstName())) {
+            return Mono.error(new InvalidInputException(ErrorCode.FIRST_NAME_REQUIRED));
+        }
+        if (isNullOrEmpty(user.getLastName())) {
+            return Mono.error(new InvalidInputException(ErrorCode.LAST_NAME_REQUIRED));
+        }
+        if (isNullOrEmpty(user.getEmail())) {
+            return Mono.error(new InvalidInputException(ErrorCode.EMAIL_REQUIRED));
+        }
+        if (user.getBaseSalary() == null) {
+            return Mono.error(new InvalidInputException(ErrorCode.BASE_SALARY_REQUIRED));
+        }
+        if (!EMAIL_PATTERN.matcher(user.getEmail()).matches()) {
+            return Mono.error(new InvalidInputException(ErrorCode.INVALID_EMAIL_FORMAT));
+        }
+        if (user.getBaseSalary().compareTo(BigDecimal.ZERO) < 0 ||
+                user.getBaseSalary().compareTo(MAX_SALARY) > 0) {
+            return Mono.error(new InvalidInputException(ErrorCode.INVALID_SALARY_RANGE));
+        }
+        return Mono.empty();
+    }
+
+    private boolean isNullOrEmpty(String valor) {
+        return valor == null || valor.trim().isEmpty();
     }
 }
