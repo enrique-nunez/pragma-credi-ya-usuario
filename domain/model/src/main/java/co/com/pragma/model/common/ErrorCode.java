@@ -25,7 +25,8 @@ public enum ErrorCode {
     DATABASE_CONSTRAINT_VIOLATION("APP_500_CONSTRAINT", "Database constraint violation"),
 
     // Internal errors (500)
-    INTERNAL_ERROR("APP_500", "Internal server error");
+    INTERNAL_ERROR("APP_500", "Internal server error"),
+    INVALID_INPUT("APP_INVALID_INPUT", "El input es inválido");
 
     private final String code;
     private final String message;
