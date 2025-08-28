@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: dev-postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-crediya}
+      POSTGRES_USER: ${POSTGRES_USER:-crediya}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+      TZ: America/Lima
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d  # scripts .sql/.sh opcionales
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_data:

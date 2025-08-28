@@ -1,14 +1,49 @@
-##Spring Configuration
 server:
   port: 8080
 spring:
-  application:
-    name: PragmaCrediYaUsuario
-  devtools:
-    add-properties: false
-  h2:
-    console:
-      enabled: true
-      path: /h2
-  profiles:
-    include:
+  r2dbc:
+    url: "r2dbc:postgresql://localhost:5433/crediya"
+    username: "crediya"
+    password: "crediya2025"
+  sql:
+    init:
+      mode: "always"
+      schema-locations: "classpath:schema.sql"
+  jackson:
+    default-property-inclusion: "non_null"
+adapters:
+  r2dbc:
+    host: "localhost"
+    port: 5433
+    database: "crediya"
+    username: "crediya"
+    password: "crediya2025"
+    pool: null
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+logging:
+  level:
+    io.r2dbc.postgresql.QUERY: "DEBUG"
+    org.springframework.data.r2dbc: "DEBUG"
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  show-actuator: false
+
+application:
+  name: "Pragma User Management API"
+  description: "API REST para administración de usuarios con arquitectura reactiva usando Spring WebFlux y R2DBC con PostgreSQL. - Banco Colombia CrediYa"
+  version: "1.0.0"
