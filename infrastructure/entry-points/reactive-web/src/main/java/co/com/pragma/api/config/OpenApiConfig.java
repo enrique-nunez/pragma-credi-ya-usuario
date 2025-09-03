@@ -28,7 +28,7 @@ public class OpenApiConfig {
                                 .name("Enrique Nunez")
                                 .email("j.nunez.constantino@gmail.com")))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080").description("Local server"),
+                        new Server().url("http://localhost:8081").description("Local server"),
                         new Server().url("https://api.pragma.co").description("Production server")
                 ));
     }

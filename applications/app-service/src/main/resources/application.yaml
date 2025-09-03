@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   r2dbc:
     url: "r2dbc:postgresql://localhost:5433/crediya"
@@ -20,7 +20,7 @@ adapters:
     password: "crediya2025"
     pool: null
 cors:
-  allowed-origins: "http://localhost:4200,http://localhost:8080"
+  allowed-origins: "http://localhost:4200,http://localhost:8081"
 management:
   endpoints:
     web:

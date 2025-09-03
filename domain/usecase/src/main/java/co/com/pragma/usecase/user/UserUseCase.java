@@ -72,6 +72,20 @@ public class UserUseCase {
                 }));
     }
 
+    public Mono<Boolean> existUserByEmail(String email) {
+        logger.info("Buscando usuario por email: " + email);
+        return userRepository.findByEmail(email)
+                .map(user -> {
+                    logger.info("Usuario encontrado:: {}" + user.getFirstName());
+                    return true;
+                })
+                .switchIfEmpty(Mono.defer(() -> {
+                    logger.warning("Usuario no encontrado con email: {}" + email);
+                    return Mono.just(false);
+                }))
+                .doOnError(error -> logger.log(Level.SEVERE, "Error al buscar usuario con email " + email + ": " + error.getMessage()));
+    }
+
     public Flux<User> findAllUsers() {
         logger.info("Obteniendo todos los usuarios");
         return userRepository.findAll()
