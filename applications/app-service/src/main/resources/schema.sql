@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS usuario (
     telefono VARCHAR(20),
     correo_electronico VARCHAR(150) UNIQUE NOT NULL,
     salario_base DECIMAL(15,2),
+    password VARCHAR(255) NOT NULL,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     role_id BIGINT REFERENCES rol(id) DEFAULT 2
 );

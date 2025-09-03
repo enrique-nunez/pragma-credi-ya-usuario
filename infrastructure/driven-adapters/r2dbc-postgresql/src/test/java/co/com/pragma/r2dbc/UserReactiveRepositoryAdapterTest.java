@@ -121,7 +121,7 @@ class UserReactiveRepositoryAdapterTest {
         entity.setFirstName("Test");
         entity.setLastName("User");
         entity.setEmail("test@example.com");
-        entity.setPhoneNumber("123456789");
+        entity.setPhone("123456789");
         entity.setAddress("Test Address");
         entity.setBirthDate(LocalDate.of(1990, 1, 1));
         entity.setBaseSalary(BigDecimal.valueOf(50000));

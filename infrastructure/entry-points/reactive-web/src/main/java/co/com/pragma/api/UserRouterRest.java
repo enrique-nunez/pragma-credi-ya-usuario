@@ -118,12 +118,45 @@ public class UserRouterRest {
                                     )
                             }
                     )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/usuarios/email/validate/{email}",
+                    method = RequestMethod.GET,
+                    operation = @Operation(
+                            operationId = "checkUserExistsByEmail",
+                            summary = "Validar existencia de usuario por email",
+                            description = "Verifica si existe un usuario con el email proporcionado",
+                            tags = {"UserHandler"},
+                            parameters = @Parameter(
+                                    name = "email",
+                                    in = ParameterIn.PATH,
+                                    description = "Email del usuario a validar"
+                            ),
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "Resultado de la validación",
+                                            content = @io.swagger.v3.oas.annotations.media.Content(
+                                                    mediaType = "application/json",
+                                                    examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+                                                            name = "ValidaciónUsuario",
+                                                            value = "{ \"data\": true, \"message\": \"El usuario existe\", \"success\": true }"
+                                                    )
+                                            )
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "404",
+                                            description = "Usuario no encontrado"
+                                    )
+                            }
+                    )
             )
     })
     public RouterFunction<ServerResponse> userRouterFunction(UserHandler userHandler) {
         return route(POST("/api/v1/usuarios"), userHandler::createUser)
                 .andRoute(GET("/api/v1/usuarios/{id}"), userHandler::getUserById)
                 .andRoute(GET("/api/v1/usuarios/email/{email}"), userHandler::getUserByEmail)
-                .andRoute(GET("/api/v1/usuarios"), userHandler::getAllUsers);
+                .andRoute(GET("/api/v1/usuarios"), userHandler::getAllUsers)
+                .andRoute(GET("/api/v1/usuarios/email/validate/{email}"), userHandler::checkUserExistsByEmail);
     }
 }

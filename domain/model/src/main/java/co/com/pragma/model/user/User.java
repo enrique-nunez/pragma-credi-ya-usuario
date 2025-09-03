@@ -18,6 +18,8 @@ public class User {
     private LocalDateTime creationDate;
     private Long roleId;
     private Role role;
+    private String password;
+
 
     public User() {
         this.creationDate = LocalDateTime.now();
@@ -25,7 +27,7 @@ public class User {
 
     public User(Long id, String firstName, String lastName, LocalDate birthDate,
                 String address, String phone, String email, BigDecimal baseSalary,
-                LocalDateTime creationDate, Long roleId, Role role) {
+                LocalDateTime creationDate, Long roleId, Role role, String password) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -37,6 +39,7 @@ public class User {
         this.creationDate = creationDate != null ? creationDate : LocalDateTime.now();
         this.roleId = roleId;
         this.role = role;
+        this.password = password;
     }
 
     // Getters
@@ -51,6 +54,7 @@ public class User {
     public LocalDateTime getCreationDate() { return creationDate; }
     public Long getRoleId() { return roleId; }
     public Role getRole() { return role; }
+    public String getPassword() { return password; }
 
     // Setters
     public void setId(Long id) { this.id = id; }
@@ -64,6 +68,7 @@ public class User {
     public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
     public void setRoleId(Long roleId) { this.roleId = roleId; }
     public void setRole(Role role) { this.role = role; }
+    public void setPassword(String password) { this.password = password; }
 
     // Builder pattern
     public static UserBuilder builder() {
@@ -82,7 +87,8 @@ public class User {
                 .baseSalary(this.baseSalary)
                 .creationDate(this.creationDate)
                 .roleId(this.roleId)
-                .role(this.role);
+                .role(this.role)
+                .password(this.password);
     }
 
     public static class UserBuilder {
@@ -97,6 +103,7 @@ public class User {
         private LocalDateTime creationDate;
         private Long roleId;
         private Role role;
+        private String password;
 
         public UserBuilder id(Long id) { this.id = id; return this; }
         public UserBuilder firstName(String firstName) { this.firstName = firstName; return this; }
@@ -109,10 +116,11 @@ public class User {
         public UserBuilder creationDate(LocalDateTime creationDate) { this.creationDate = creationDate; return this; }
         public UserBuilder roleId(Long roleId) { this.roleId = roleId; return this; }
         public UserBuilder role(Role role) { this.role = role; return this; }
+        public UserBuilder password(String password) { this.password = password; return this; }
 
         public User build() {
             return new User(id, firstName, lastName, birthDate, address, phone, email,
-                    baseSalary, creationDate, roleId, role);
+                    baseSalary, creationDate, roleId, role, password);
         }
     }
 }

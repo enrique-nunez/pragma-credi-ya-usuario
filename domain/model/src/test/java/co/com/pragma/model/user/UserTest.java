@@ -89,7 +89,7 @@ class UserTest {
     void constructor_WithNullCreationDate_ShouldSetCurrentTime() {
         User user = new User(1L, "Juan", "Pérez", LocalDate.of(1990, 1, 1),
                 "Calle 123", "1234567890", "juan@test.com",
-                new BigDecimal("1000000"), null, 1L, testRole);
+                new BigDecimal("1000000"), null, 1L, testRole, "123");
 
         assertNotNull(user.getCreationDate());
         assertTrue(user.getCreationDate().isBefore(LocalDateTime.now().plusSeconds(1)));
@@ -101,7 +101,7 @@ class UserTest {
 
         User user = new User(1L, "Juan", "Pérez", LocalDate.of(1990, 1, 1),
                 "Calle 123", "1234567890", "juan@test.com",
-                new BigDecimal("1000000"), specificDate, 1L, testRole);
+                new BigDecimal("1000000"), specificDate, 1L, testRole, "123");
 
         assertEquals(specificDate, user.getCreationDate());
     }
