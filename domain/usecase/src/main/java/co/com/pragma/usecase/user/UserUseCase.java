@@ -5,6 +5,7 @@ import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.exceptions.InvalidInputException;
 import co.com.pragma.model.common.ErrorCode;
 import co.com.pragma.model.user.exceptions.UserNotFoundException;
+import co.com.pragma.model.user.gateways.PasswordValidator;
 import co.com.pragma.model.user.gateways.UserRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -22,13 +23,15 @@ public class UserUseCase {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordValidator passwordValidator;
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
     private static final BigDecimal MAX_SALARY = new BigDecimal("15000000");
 
-    public UserUseCase(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserUseCase(UserRepository userRepository, RoleRepository roleRepository, PasswordValidator passwordValidator) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordValidator = passwordValidator;
     }
 
     public Mono<User> registerUser(User user) {
@@ -99,6 +102,31 @@ public class UserUseCase {
                 )
                 .doOnComplete(() -> logger.info("Todos los usuarios con roles obtenidos exitosamente"))
                 .doOnError(error -> logger.log(Level.SEVERE, "Error al obtener usuarios con roles: " + error.getMessage()));
+    }
+
+    public Mono<User> authenticateUser(String email, String password) {
+        logger.info("Autenticando usuario con email: " + email);
+
+        return userRepository.findByEmail(email)
+                .switchIfEmpty(Mono.error(new UserNotFoundException(ErrorCode.USER_NOT_FOUND)))
+                .flatMap(user -> {
+                    // Validar contraseña usando el helper inyectado
+                    if (passwordValidator.validate(password, user.getPassword())) {
+                        logger.info("Autenticación exitosa para usuario: " + user.getEmail());
+                        // Cargar el rol del usuario
+                        return roleRepository.findById(user.getRoleId())
+                                .map(role -> {
+                                    user.setRole(role);
+                                    return user;
+                                })
+                                .defaultIfEmpty(user);
+                    } else {
+                        logger.warning("Contraseña incorrecta para usuario: " + email);
+                        return Mono.error(new UserNotFoundException(ErrorCode.VALIDATION_ERROR));
+                    }
+                })
+                .doOnError(error ->
+                        logger.log(Level.SEVERE, "Error al autenticar usuario " + email + ": " + error.getMessage()));
     }
 
     private Mono<Void> validateUniqueEmail(String email) {

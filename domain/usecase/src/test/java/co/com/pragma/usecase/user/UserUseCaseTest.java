@@ -5,6 +5,7 @@ import co.com.pragma.model.role.gateways.RoleRepository;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.exceptions.InvalidInputException;
 import co.com.pragma.model.user.exceptions.UserNotFoundException;
+import co.com.pragma.model.user.gateways.PasswordValidator;
 import co.com.pragma.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,12 +35,14 @@ class UserUseCaseTest {
 
     private UserUseCase userUseCase;
 
+    private PasswordValidator passwordValidator;
+
     private User testUser;
     private Role testRole;
 
     @BeforeEach
     void setUp() {
-        userUseCase = new UserUseCase(userRepository, roleRepository);
+        userUseCase = new UserUseCase(userRepository, roleRepository, passwordValidator);
 
         testRole = new Role();
         testRole.setId(1L);

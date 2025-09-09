@@ -8,4 +8,8 @@ public class PasswordHelper {
     public static String encryptPassword(String rawPassword) {
         return encoder.encode(rawPassword);
     }
+
+    public static boolean validatePassword(String rawPassword, String encodedPassword) {
+        return encoder.matches(rawPassword, encodedPassword);
+    }
 }

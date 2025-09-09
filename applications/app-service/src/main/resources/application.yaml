@@ -47,3 +47,13 @@ application:
   name: "Pragma User Management API"
   description: "API REST para administración de usuarios con arquitectura reactiva usando Spring WebFlux y R2DBC con PostgreSQL. - Banco Colombia CrediYa"
   version: "1.0.0"
+
+security:
+  jwt:
+    secret: miSecretoSuperSecreto123456789012345678901234567890
+    ttl-minutes: 1440
+    expiration: 86400000
+
+app:
+  issuer: pragma-credi-ya
+  audience: pragma-credi-ya-audience
