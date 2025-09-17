@@ -11,15 +11,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 
 @Configuration
+@ComponentScan(basePackages = "co.com.pragma.usecase",
+        includeFilters = {
+                @ComponentScan.Filter(type = FilterType.REGEX, pattern = ".*UseCase$")
+        },
+        useDefaultFilters = false)
 public class UseCasesConfig {
-
-        @Bean
-        public UserUseCase userUseCase(UserRepository userRepository, RoleRepository roleRepository, PasswordValidator passwordValidator) {
-                return new UserUseCase(userRepository, roleRepository, passwordValidator);
-        }
-
-        @Bean
-        public RoleUseCase roleUseCase(RoleRepository roleRepository) {
-                return new RoleUseCase(roleRepository);
-        }
 }

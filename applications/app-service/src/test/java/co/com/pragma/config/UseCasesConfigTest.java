@@ -1,57 +1,46 @@
 package co.com.pragma.config;
 
-import co.com.pragma.model.role.gateways.RoleRepository;
-import co.com.pragma.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.core.annotation.AnnotationUtils;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class UseCasesConfigTest {
 
     @Test
-    void testUseCaseBeansExist() {
-        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class)) {
-            String[] beanNames = context.getBeanDefinitionNames();
+    void testComponentScanConfiguration() {
+        ComponentScan componentScan = AnnotationUtils.findAnnotation(UseCasesConfig.class, ComponentScan.class);
 
-            boolean useCaseBeanFound = false;
-            for (String beanName : beanNames) {
-                if (beanName.endsWith("UseCase")) {
-                    useCaseBeanFound = true;
-                    break;
-                }
-            }
+        assertNotNull(componentScan);
+        assertEquals("co.com.pragma.usecase", componentScan.basePackages()[0]);
+        assertFalse(componentScan.useDefaultFilters());
 
-            assertTrue(useCaseBeanFound, "No beans ending with 'UseCase' were found");
-        }
+        ComponentScan.Filter filter = componentScan.includeFilters()[0];
+        assertEquals(FilterType.REGEX, filter.type());
+        assertEquals(".*UseCase$", filter.pattern()[0]);
     }
 
-    @Configuration
-    @Import(UseCasesConfig.class)
-    static class TestConfig {
+    @Test
+    void testRegexPatternMatching() {
+        String pattern = "^.*UseCase$";
 
-        @Bean
-        public UserRepository userRepository() {
-            return mock(UserRepository.class);
-        }
-
-        @Bean
-        public RoleRepository roleRepository() {
-            return mock(RoleRepository.class);
-        }
-
-        @Bean
-        public MyUseCase myUseCase() {
-            return new MyUseCase();
-        }
+        assertTrue("RoleUseCase".matches(pattern));
+        assertTrue("UserUseCase".matches(pattern));
+        assertFalse("UserService".matches(pattern));
+        assertFalse("UserRepository".matches(pattern));
     }
 
-    static class MyUseCase {
-        public String execute() {
-            return "MyUseCase Test";
-        }
+    @Test
+    void testConfigurationInstantiation() {
+        assertDoesNotThrow(() -> {
+            UseCasesConfig config = new UseCasesConfig();
+            assertNotNull(config);
+        });
     }
+
+
 }

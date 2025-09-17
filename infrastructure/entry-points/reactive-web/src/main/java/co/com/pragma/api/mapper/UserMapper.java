@@ -12,6 +12,7 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "role", ignore = true)
     User toUser(UserCreateRequestDto userCreateRequestDto);
 
     @Mapping(source = "creationDate", target = "creationDate")

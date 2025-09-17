@@ -19,7 +19,7 @@ import java.util.Set;
 @Service
 public class JwtService {
 
-    private SecretKey key;
+    private final SecretKey key;
     private final String issuer;
     private final String audience;
     private final Long ttlMinutes;
@@ -34,13 +34,17 @@ public class JwtService {
         this.issuer = issuer;
         this.audience = audience;
         this.ttlMinutes = ttlMinutes;
+        byte[] bytes = secret.matches("^[A-Za-z0-9+/=]+$") ?
+                io.jsonwebtoken.io.Decoders.BASE64.decode(secret) :
+                secret.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        this.key = io.jsonwebtoken.security.Keys.hmacShaKeyFor(bytes);
     }
 
-    @PostConstruct
-    public void init() {
-        byte[] bytes = secret.matches("^[A-Za-z0-9+/=]+$") ? Decoders.BASE64.decode(secret) : secret.getBytes(StandardCharsets.UTF_8);
-        this.key = Keys.hmacShaKeyFor(bytes);
-    }
+//    @PostConstruct
+//    public void init() {
+//        byte[] bytes = secret.matches("^[A-Za-z0-9+/=]+$") ? Decoders.BASE64.decode(secret) : secret.getBytes(StandardCharsets.UTF_8);
+//        this.key = Keys.hmacShaKeyFor(bytes);
+//    }
 
     public String generate(Long userId, String email, String role) {
         Instant now = Instant.now();
