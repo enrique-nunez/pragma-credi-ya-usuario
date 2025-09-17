@@ -1,8 +1,8 @@
 server:
-  port: 8081
+  port: 8085
 spring:
   r2dbc:
-    url: "r2dbc:postgresql://localhost:5433/crediya"
+    url: "r2dbc:postgresql://localhost:5433/crediyaseguridad"
     username: "crediya"
     password: "crediya2025"
   sql:
@@ -11,14 +11,6 @@ spring:
       schema-locations: "classpath:schema.sql"
   jackson:
     default-property-inclusion: "non_null"
-adapters:
-  r2dbc:
-    host: "localhost"
-    port: 5433
-    database: "crediya"
-    username: "crediya"
-    password: "crediya2025"
-    pool: null
 cors:
   allowed-origins: "http://localhost:4200,http://localhost:8081"
 management:

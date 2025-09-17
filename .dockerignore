@@ -1,0 +1,54 @@
+# Ignorar archivos innecesarios para la construcción Docker
+
+# Directorios de build
+**/build/
+**/target/
+**/out/
+**/.gradle/
+
+# Cache
+**/build-cache/
+**/.gradle/
+
+# IDE files
+**/.idea/
+**/.vscode/
+**/*.iml
+**/.project
+**/.classpath
+**/.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+**/.DS_Store
+**/Thumbs.db
+
+# Git
+**/.git/
+**/.gitignore
+
+# Logs
+**/*.log
+**/logs/
+
+# Docker files (evitar recursión)
+**/Dockerfile
+**/docker-compose*.yml
+**/.dockerignore
+
+# Test reports
+**/test-results/
+**/reports/
+
+# Temporary files
+**/tmp/
+**/temp/
+
+# Documentation (no necesaria en runtime)
+**/README*.md
+**/docs/
+
+# Scripts de desarrollo
+**/*.sh
+**/*.bat
