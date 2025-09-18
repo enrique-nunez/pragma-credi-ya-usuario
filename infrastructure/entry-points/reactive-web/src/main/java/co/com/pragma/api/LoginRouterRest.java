@@ -37,7 +37,7 @@ public class LoginRouterRest {
                                             mediaType = "application/json",
                                             examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
                                                     name = "EjemploLogin",
-                                                    value = "{ \"email\": \"prueba@gmail.com\", \"lastName\": \"Pérez\" }"
+                                                    value = "{ \"email\": \"prueba@gmail.com\", \"password\": \"1234\" }"
                                             )
                                     )
                             ),
@@ -47,7 +47,7 @@ public class LoginRouterRest {
                                                     mediaType = "application/json",
                                                     examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
                                                             name = "UsuarioRespuesta",
-                                                            value = "{ \"id\": 1, \"firstName\": \"Juan\", \"lastName\": \"Pérez\", \"birthDate\": \"1990-05-15\", \"address\": \"Calle 123 #45-67\", \"phone\": \"+573001234567\", \"email\": \"juan.perez@correo.com\", \"baseSalary\": 2500000.00, \"creationDate\": \"2024-01-15T10:30:45\", \"role\": { \"id\": 1, \"name\": \"Empleado\", \"description\": \"Empleado regular\" } }"
+                                                            value = "{ \"email\": \"juan.perez@correo.com\", \"password\": \"1234\" } }"
                                                     )
                                             )
                                     ),

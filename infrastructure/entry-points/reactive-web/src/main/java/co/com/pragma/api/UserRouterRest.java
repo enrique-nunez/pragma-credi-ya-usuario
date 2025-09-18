@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
-import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
@@ -25,7 +24,7 @@ public class UserRouterRest {
     @RouterOperations({
             @RouterOperation(
                     path = "/api/v1/usuarios",
-                    method = RequestMethod.POST,
+                    method = RequestMethod.PUT,
                     operation = @Operation(
                             operationId = "createUser",
                             summary = "Crear usuario",
@@ -55,50 +54,50 @@ public class UserRouterRest {
                             }
                     )
             ),
-            @RouterOperation(
-                    path = "/api/v1/usuarios/{id}",
-                    method = RequestMethod.GET,
-                    operation = @Operation(
-                            operationId = "getUserById",
-                            summary = "Obtener usuario por ID",
-                            parameters = @Parameter(name = "id", in = ParameterIn.PATH, description = "ID del usuario"),
-                            tags = {"UserHandler"},
-                            responses = {
-                                    @ApiResponse(responseCode = "200", description = "Usuario encontrado",
-                                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                                    mediaType = "application/json",
-                                                    examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                                            name = "UsuarioRespuesta",
-                                                            value = "{ \"id\": 1, \"firstName\": \"Juan\", \"lastName\": \"Pérez\", \"birthDate\": \"1990-05-15\", \"address\": \"Calle 123 #45-67\", \"phone\": \"+573001234567\", \"email\": \"juan.perez@correo.com\", \"baseSalary\": 2500000.00, \"creationDate\": \"2024-01-15T10:30:45\", \"role\": { \"id\": 1, \"name\": \"Empleado\", \"description\": \"Empleado regular\" } }"
-                                                    )
-                                            )
-                                    ),
-                                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
-                            }
-                    )
-            ),
-            @RouterOperation(
-                    path = "/api/v1/usuarios/email/{email}",
-                    method = RequestMethod.GET,
-                    operation = @Operation(
-                            operationId = "getUserByEmail",
-                            summary = "Obtener usuario por email",
-                            parameters = @Parameter(name = "email", in = ParameterIn.PATH, description = "Email del usuario"),
-                            tags = {"UserHandler"},
-                            responses = {
-                                    @ApiResponse(responseCode = "200", description = "Usuario encontrado",
-                                            content = @io.swagger.v3.oas.annotations.media.Content(
-                                                    mediaType = "application/json",
-                                                    examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
-                                                            name = "UsuarioRespuesta",
-                                                            value = "{ \"id\": 1, \"firstName\": \"Juan\", \"lastName\": \"Pérez\", \"birthDate\": \"1990-05-15\", \"address\": \"Calle 123 #45-67\", \"phone\": \"+573001234567\", \"email\": \"juan.perez@correo.com\", \"baseSalary\": 2500000.00, \"creationDate\": \"2024-01-15T10:30:45\", \"role\": { \"id\": 1, \"name\": \"Empleado\", \"description\": \"Empleado regular\" } }"
-                                                    )
-                                            )
-                                    ),
-                                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
-                            }
-                    )
-            ),
+//            @RouterOperation(
+//                    path = "/api/v1/usuarios/{id}",
+//                    method = RequestMethod.GET,
+//                    operation = @Operation(
+//                            operationId = "getUserById",
+//                            summary = "Obtener usuario por ID",
+//                            parameters = @Parameter(name = "id", in = ParameterIn.PATH, description = "ID del usuario"),
+//                            tags = {"UserHandler"},
+//                            responses = {
+//                                    @ApiResponse(responseCode = "200", description = "Usuario encontrado",
+//                                            content = @io.swagger.v3.oas.annotations.media.Content(
+//                                                    mediaType = "application/json",
+//                                                    examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+//                                                            name = "UsuarioRespuesta",
+//                                                            value = "{ \"id\": 1, \"firstName\": \"Juan\", \"lastName\": \"Pérez\", \"birthDate\": \"1990-05-15\", \"address\": \"Calle 123 #45-67\", \"phone\": \"+573001234567\", \"email\": \"juan.perez@correo.com\", \"baseSalary\": 2500000.00, \"creationDate\": \"2024-01-15T10:30:45\", \"role\": { \"id\": 1, \"name\": \"Empleado\", \"description\": \"Empleado regular\" } }"
+//                                                    )
+//                                            )
+//                                    ),
+//                                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+//                            }
+//                    )
+//            ),
+//            @RouterOperation(
+//                    path = "/api/v1/usuarios/email/{email}",
+//                    method = RequestMethod.GET,
+//                    operation = @Operation(
+//                            operationId = "getUserByEmail",
+//                            summary = "Obtener usuario por email",
+//                            parameters = @Parameter(name = "email", in = ParameterIn.PATH, description = "Email del usuario"),
+//                            tags = {"UserHandler"},
+//                            responses = {
+//                                    @ApiResponse(responseCode = "200", description = "Usuario encontrado",
+//                                            content = @io.swagger.v3.oas.annotations.media.Content(
+//                                                    mediaType = "application/json",
+//                                                    examples = @io.swagger.v3.oas.annotations.media.ExampleObject(
+//                                                            name = "UsuarioRespuesta",
+//                                                            value = "{ \"id\": 1, \"firstName\": \"Juan\", \"lastName\": \"Pérez\", \"birthDate\": \"1990-05-15\", \"address\": \"Calle 123 #45-67\", \"phone\": \"+573001234567\", \"email\": \"juan.perez@correo.com\", \"baseSalary\": 2500000.00, \"creationDate\": \"2024-01-15T10:30:45\", \"role\": { \"id\": 1, \"name\": \"Empleado\", \"description\": \"Empleado regular\" } }"
+//                                                    )
+//                                            )
+//                                    ),
+//                                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+//                            }
+//                    )
+//            ),
             @RouterOperation(
                     path = "/api/v1/usuarios",
                     method = RequestMethod.GET,
@@ -120,7 +119,7 @@ public class UserRouterRest {
                     )
             ),
             @RouterOperation(
-                    path = "/api/v1/usuarios/email/validate/{email}",
+                    path = "/api/v1/usuarios/validar/{email}",
                     method = RequestMethod.GET,
                     operation = @Operation(
                             operationId = "checkUserExistsByEmail",
@@ -153,10 +152,10 @@ public class UserRouterRest {
             )
     })
     public RouterFunction<ServerResponse> userRouterFunction(UserHandler userHandler) {
-        return route(POST("/api/v1/usuarios"), userHandler::createUser)
-                .andRoute(GET("/api/v1/usuarios/{id}"), userHandler::getUserById)
-                .andRoute(GET("/api/v1/usuarios/email/{email}"), userHandler::getUserByEmail)
+        return route(PUT("/api/v1/usuarios"), userHandler::createUser)
+//                .andRoute(GET("/api/v1/usuarios/{id}"), userHandler::getUserById)
+//                .andRoute(GET("/api/v1/usuarios/email/{email}"), userHandler::getUserByEmail)
                 .andRoute(GET("/api/v1/usuarios"), userHandler::getAllUsers)
-                .andRoute(GET("/api/v1/usuarios/email/validate/{email}"), userHandler::checkUserExistsByEmail);
+                .andRoute(GET("/api/v1/usuarios/validar/{email}"), userHandler::checkUserExistsByEmail);
     }
 }

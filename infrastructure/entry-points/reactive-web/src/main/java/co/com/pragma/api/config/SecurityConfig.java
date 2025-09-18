@@ -80,7 +80,8 @@ public class SecurityConfig {
                 .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(PUBLIC_PATHS).permitAll()
-                        .pathMatchers(HttpMethod.POST, "/api/v1/usuarios").hasAnyAuthority("ADMIN", "ASESOR")
+//                        .pathMatchers(HttpMethod.POST, "/api/v1/usuarios").hasAnyAuthority("ADMIN", "ASESOR")
+                        .pathMatchers(HttpMethod.PUT, "/api/v1/usuarios").permitAll() // Acceso público
                         .pathMatchers("/api/**").authenticated()
                         .anyExchange().permitAll() // Permitir otras rutas no API
                 )
